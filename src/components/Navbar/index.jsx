@@ -10,6 +10,7 @@ class Navbar extends React.Component {
   onClick(e){
     localStorage.removeItem('userToken')
     localStorage.removeItem('userName')
+    localStorage.removeItem('userId')
     window.location.reload("/")
   }
 
@@ -26,21 +27,27 @@ class Navbar extends React.Component {
           </div>
           <div className="topbar-right">
             <ul className="topbar-nav nav">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
+              
               
               {localStorage.getItem("userToken") != null ? 
+              <>
+              <li className="nav-item">
+              <Link className="nav-link" to="/">Home</Link>
+              </li>
+              <li className="nav-item">
+              <Link className="nav-link" to="/post/create">Create</Link>
+              </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">{localStorage.getItem("userName")}
                   <i className="fa fa-caret-down" />
                 </a>
                 <div className="nav-submenu">
-                  <a className="nav-link" href="/user/profile">Profile</a>
-                  <a className="nav-link" href="page-login.html">My articles</a>
+                  <a className="nav-link" href="/user/profile">My Profile</a>
+                  <a className="nav-link" href="/user/post">My Blog</a>
                   <a className="nav-link" onClick={this.onClick} href="/">Logout</a>
                 </div>
               </li>
+              </>
               : 
               <>
                 <li className="nav-item">

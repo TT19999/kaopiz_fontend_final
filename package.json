@@ -2,14 +2,19 @@
   "name": "jayblog",
   "version": "0.1.0",
   "private": true,
+  "proxy" : "https://whispering-escarpment-70299.herokuapp.com/",
   "dependencies": {
     "axios": "^0.18.0",
+    "http-proxy-middleware": "^1.0.6",
     "indicative": "^5.0.8",
     "react": "^16.5.2",
+    "react-bootstrap": "^1.4.0",
     "react-dom": "^16.5.2",
+    "react-multi-select-component": "^3.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.0.3"
+    "react-scripts": "2.0.3",
+    "react-select": "^3.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

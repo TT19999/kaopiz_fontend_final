@@ -1,8 +1,9 @@
 import React from 'react'
 import axios from "axios"
 import Banner from '../Banner'
-import Article from '../Article'
 import { Link } from 'react-router-dom'
+import FormReset from './form_reset'
+import ModalEdit from './modal_edit'
 
 class Profile extends React.Component {
     constructor()
@@ -14,14 +15,16 @@ class Profile extends React.Component {
             email:"",
             avatar:"",
             phone:"",
+            avatar: "",
             user: [],
             profile:[],
             action:"",
+            skill:[],
+            showModalCard : false,
         }
     }
-
     async componentDidMount()  {
-        await axios.get("http://127.0.0.1:8000/api/user/profile",{
+        await axios.get("/api/user/profile",{
             headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
         }).then(res => {
             console.log(res)
@@ -29,14 +32,63 @@ class Profile extends React.Component {
                 this.setState({
                     user:res.data.user,
                     profile: res.data.profile,
-                    action: res.data.action
+                    skill : res.data.skill,
+                    action: res.data.action,
+                    avatar : res.data.profile.avatar,
                 })
                 console.log(this.state.user.name)
             }
-        }
-        )
+        }).catch(errors => {
+            console.log(errors.response);
+            alert(errors.response.data.errors)
+            if(errors.response.status == 401) {
+                localStorage.removeItem("userToken")
+                localStorage.removeItem("userName")
+                window.location.replace('/login')
+            }
+          })
     }
+
+    onClickEdit(){
+        this.setState({
+            showModalCard: !this.state.showModalCard
+        })
+    }
+
+    onAvatarChange = event => {
+        if (event.target.files && event.target.files[0]) {
+            let img = event.target.files[0];
+            var data = new FormData()
+            data.append("avatar", img)
+            axios.post('/api/user/profile/avatar',data, {
+                headers : {
+                    'Authorization' : 'Bearer ' + localStorage.getItem("userToken")
+                }
+            }).then(res => {
+                console.log(res)
+                this.setState({
+                    avatar : res.data.avatar
+                })
+                alert(res.data.message)
+            }).catch(errors => {
+                console.log(errors.response);
+                alert(errors.response.data.errors)
+            })
+          }
+        
+    }
+
     render(){
+        const Skill = this.state.skill != [] ? 
+                this.state.skill.map(res => {
+                   return (
+                       <>
+                       <a className="badge badge-pill badge-default" href={"/post/"+res.name}>{res.name}</a> <br/>
+                       </>
+                   ) 
+                })
+                : 
+                null
         return (
             <div>
                 <Banner 
@@ -48,10 +100,10 @@ class Profile extends React.Component {
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="profile-img">
-                                        <img src="{{$profile->avatar}}" alt=""/>
+                                        <img src={this.state.avatar} alt="" />
                                         <div class="file btn btn-lg btn-primary">
                                             Change Photo
-                                            <input type="file" name="file"/>
+                                            <input type="file" name="avatar" onChange={this.onAvatarChange} />
                                         </div>
                                     </div>
                                 </div>
@@ -67,29 +119,26 @@ class Profile extends React.Component {
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
+                                            <li class="nav-item" style={{paddingLeft: "5px"}}>
+                                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Password</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
+                                    <ModalEdit user={this.state.user} profile={this.state.profile} skill={this.state.skill}/>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="profile-work">
                                         <p>WORK LINK</p>
-                                        <a href="">Website Link</a><br/>
-                                        <a href="">Bootsnipp Profile</a><br/>
-                                        <a href="">Bootply Profile</a>
+                                            <a href={this.state.profile.facebook}>facebook : <a>{this.state.profile.facebook}</a> </a><br/>
+                                            <a href={this.state.profile.twitter}>twitter : <a>{this.state.profile.twitter}</a> </a><br/>
+                                            <a href={this.state.profile.github}>github : <a>{this.state.profile.github}</a> </a><br/>
+                                            <a href={this.state.profile.website}>website : <a>{this.state.profile.website}</a> </a><br/>
                                         <p>SKILLS</p>
-                                        <a href="">Web Designer</a><br/>
-                                        <a href="">Web Developer</a><br/>
-                                        <a href="">WordPress</a><br/>
-                                        <a href="">WooCommerce</a><br/>
-                                        <a href="">PHP, .Net</a><br/>
+                                        {Skill}
                                     </div>
                                 </div>
                                 <div class="col-md-8">
@@ -127,54 +176,17 @@ class Profile extends React.Component {
                                                     <p>{this.state.profile.phone}</p>
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label>Status</label>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p>{this.state.profile.status}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label>Experience</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p>Expert</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label>Hourly Rate</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p>10$/hr</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label>Total Projects</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p>230</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label>English Level</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p>Expert</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label>Availability</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p>6 months</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label>Your Bio</label><br/>
-                                                    <p>Your detail description</p>
-                                                </div>
-                                            </div>
+                                            <FormReset />
                                         </div>
                                     </div>
                                 </div>

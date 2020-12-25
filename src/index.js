@@ -6,27 +6,64 @@ import Welcome from './components/Welcome';
 import Footer from './components/Footer';
 import Login from './components/Login';
 import SignUp from './components/SignUp/index';
-import SingleArticle from './components/SingleArticle';
-import CreateArtice from './components/CreateArticle';
 import * as serviceWorker from './serviceWorker';
 import Profile from './components/Profile/profile';
 import "./index.css";
+import Form from './components/Profile/form';
+import axios from 'axios';
+import About from './components/about';
+import ForgotPassword from './components/Forgot';
+import Page404 from './components/404Page';
+import SinglePost from './components/SinglePost/SinglePost';
+import Createpost from './components/Createpost/CreatePost';
+import UserBlog from './components/UserBlog/UserBlog';
+import Test from './components/Welcome/test';
+import Verify from './components/Verify/Verify';
 
 
 const Main = withRouter(({ location }) => {
+  // const checkLogin= () => {
+  //     axios.get("/api/user/profile",{
+  //           headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
+  //       }).then(res => {
+  //           console.log(res)
+  //           if(res.status == 200){
+  //               this.setState({
+  //                   user:res.data.user,
+  //                   profile: res.data.profile,
+  //                   skill : res.data.skill,
+  //                   action: res.data.action
+  //               })
+  //               console.log(this.state.user.name)
+  //           }
+  //       }).catch(errors => {
+  //           console.log(errors.response);
+  //           alert(errors.response.data.errors)
+  //           if(errors.response.status == 401) {
+  //               localStorage.removeItem("userToken")
+  //               localStorage.removeItem("userName")
+  //               window.location.replace('/login')
+  //           }
+  //     })
+  // }
 return (
 <div>
   {
-    location.pathname !== '/login' && location.pathname !== '/signup' &&
-    <Navbar/>
+    location.pathname !== '/login' 
+    && location.pathname !== '/signup' 
+    && location.pathname !== '/forgotPassword' 
+    && location.pathname !== '/verify'
+    && <Navbar/>
   }
     <Switch>
-      <Route exact path="/" component={Welcome}/>   
+      <Route exact path="/" component={localStorage.getItem("userToken") == null ? About : Welcome}/>   
       <Route  exact path="/user/profile" component={Profile}/>
-      <Route exact path="/article/:slug" component={SingleArticle}/>
-      <Route exact path="/articles/create" component={CreateArtice}/>
-      <Route exact path="/signup" component={SignUp}/>
-
+      <Route exact path="/post/create" component={Createpost}/>
+      <Route exact path="/user/post" component={UserBlog} />
+      <Route exact path="/post/:id" component={SinglePost} />
+      <Route exact path="/user/profile/:id" component={Form} />
+      <Route exact path="/test" component={Test} /> 
+      
       <Route exact path="/login" >
         {localStorage.getItem("userToken") ? 
         <>
@@ -34,12 +71,39 @@ return (
         </>
         : <Login></Login>}
       </Route>
+      <Route exact path="/verify" >
+        {localStorage.getItem("userToken") ? 
+        <>
+        <Redirect to="/"/>
+        </>
+        : <Verify></Verify>}
+      </Route>
+      <Route exact path="/signup" >
+        {localStorage.getItem("userToken") ? 
+        <>
+        <Redirect to="/"/>
+        </>
+        : <SignUp></SignUp>}
+      </Route>
+      <Route exact path="/forgotPassword" >
+        {localStorage.getItem("userToken") ? 
+        <>
+        <Redirect to="/"/>
+        </>
+        : <ForgotPassword></ForgotPassword>}
+      </Route>
+      <Route>
+        <Page404 />
+      </Route>
     </Switch>
     
     
     {
-    location.pathname !== '/login' && location.pathname !== '/signup' &&
-    <Footer />
+    location.pathname !== '/login' 
+    && location.pathname !== '/signup' 
+    && location.pathname !== '/forgotPassword'
+    && location.pathname !== '/verify'
+    && <Footer />
     }
   </div>
 );

@@ -1,39 +1,54 @@
 import React from 'react';
 import Banner from './../Banner';
-import Article from './../Article';
 
-const Welcome = () => {
-  return (
+import Post from '../Post/post';
+import axios from 'axios';
+
+class  Welcome extends React.Component{
+  constructor(props){
+    super(props)
+    this.state={
+      post:[],
+    }
+  }
+
+  componentDidMount(){
+    axios.get("/api/post").then(res =>{
+      this.setState({
+        post: res.data.post
+      })
+      console.log(res.data)
+    }).catch(errors =>{
+      alert(errors.response.data.errors)
+    })
+  }
+
+  render(){
+      const RenderPost = this.state.post != [] ? 
+      this.state.post.map(res => {
+        return (
+            <>
+            <Post post={res}/>
+            </>
+        ) 
+      })
+      : 
+      null
+    return (
     <div>
       <Banner 
       backgroundImage="url(assets/img/bg-gift.jpg)"
       title="Latest Blog Posts"
       subtitle="Read and get updated on the latest posts"
       />
-        
-       
-    
-    <main className="main-content bg-gray">
-      <div className="row">
-        <div className="col-12 col-lg-6 offset-lg-3">
-          <Article/>
-          <hr/>
-          <Article/>
-          <hr/>
-          <Article/>
-          <nav className="flexbox mt-50 mb-50">
-          <a className="btn btn-white disabled">
-            <i className="ti-arrow-left fs-9 mr-4" /> Newer</a>
-          <a className="btn btn-white" href="#">Older
-            <i className="ti-arrow-right fs-9 ml-4" />
-          </a>
-          </nav>
-        </div>
-      </div>
+    <main className="main-content bg-gray">      
+          <section class="blog-cards-wrapper">
+          {RenderPost}
+          </section>
     </main>
-
     </div>
-  );
+    )
 };
+}
 
 export default Welcome;

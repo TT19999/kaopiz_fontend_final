@@ -119,9 +119,11 @@ function checkValidServiceWorker(swUrl, config) {
 }
 
 export function unregister() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.unregister();
-    });
-  }
+  console.log(window.location.search)
+  window.location.pathname !== '/login' 
+  && window.location.pathname !== '/signup' 
+  && window.location.pathname !== '/forgotPassword' 
+  &&  window.location.pathname !== '/verify'
+  && window.localStorage.getItem('userToken') == null
+  && window.location.replace('/login')
 }

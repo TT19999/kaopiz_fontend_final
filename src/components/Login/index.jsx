@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
+import config from '../config';
 
 class Login extends React.Component {
 
@@ -26,15 +27,23 @@ class Login extends React.Component {
             email : this.state.email,
             password: this.state.password
         }
-        axios.post('http://127.0.0.1:8000/api/login', user , {
+        axios.post('/api/login', user , {
             headers: {'Content-Type' : 'application/json'}
         }).then(res => {
           console.log("abc")
             console.log(res)
             localStorage.setItem('userToken',res.data.token)
             localStorage.setItem('userName',res.data.user.name)
+            localStorage.setItem('userId',res.data.user.id)
             window.location.replace("/")
             
+        }).catch(errors => {
+          console.log(errors.response);
+          if(errors.response.status == 403){
+            config.email = this.state.email
+            window.location.replace('/verify?'+this.state.email)
+          }
+          alert(errors.response.data.errors)
         })
         
     }
@@ -54,11 +63,8 @@ class Login extends React.Component {
       </div>
       <div className="form-group flexbox py-10">
         <label className="custom-control custom-checkbox">
-          <input type="checkbox" className="custom-control-input" defaultChecked />
-          <span className="custom-control-indicator" />
-          <span className="custom-control-description">Remember me</span>
         </label>
-        <a className="text-muted hover-primary fs-13" href="#">Forgot password?</a>
+        <a className="text-muted hover-primary fs-13" href="/forgotPassword">Forgot password?</a>
       </div>
       <div className="form-group">
         <button className="btn btn-bold btn-block btn-primary" type="submit" >Login</button>
