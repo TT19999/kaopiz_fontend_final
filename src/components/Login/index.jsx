@@ -35,6 +35,7 @@ class Login extends React.Component {
             localStorage.setItem('userToken',res.data.token)
             localStorage.setItem('userName',res.data.user.name)
             localStorage.setItem('userId',res.data.user.id)
+            localStorage.setItem('avatar',res.data.avatar)
             window.location.replace("/")
             
         }).catch(errors => {

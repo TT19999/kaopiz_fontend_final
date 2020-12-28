@@ -17,8 +17,8 @@ import Page404 from './components/404Page';
 import SinglePost from './components/SinglePost/SinglePost';
 import Createpost from './components/Createpost/CreatePost';
 import UserBlog from './components/UserBlog/UserBlog';
-import Test from './components/Welcome/test';
 import Verify from './components/Verify/Verify';
+import MyComponent from './components/Welcome/test';
 
 
 const Main = withRouter(({ location }) => {
@@ -62,7 +62,7 @@ return (
       <Route exact path="/user/post" component={UserBlog} />
       <Route exact path="/post/:id" component={SinglePost} />
       <Route exact path="/user/profile/:id" component={Form} />
-      <Route exact path="/test" component={Test} /> 
+      <Route exact path="/test" component={MyComponent} /> 
       
       <Route exact path="/login" >
         {localStorage.getItem("userToken") ? 

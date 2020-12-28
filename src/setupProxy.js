@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://whispering-escarpment-70299.herokuapp.com/',
+      target: 'http://127.0.0.1:8000/',
       changeOrigin: true,
     })
   );
