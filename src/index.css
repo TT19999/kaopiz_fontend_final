@@ -207,6 +207,15 @@ a {
   line-height: 1em;
   opacity: .8;
 }
+.blogg-card .more {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.75em;
+  padding: 1em;
+  line-height: 1em;
+  opacity: .8;
+}
 
 .blog-card:before, .blog-card:after {
   content: '';

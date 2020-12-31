@@ -19,6 +19,7 @@ import Createpost from './components/Createpost/CreatePost';
 import UserBlog from './components/UserBlog/UserBlog';
 import Verify from './components/Verify/Verify';
 import MyComponent from './components/Welcome/test';
+import EditPost from './components/Edit/EditPost';
 
 
 const Main = withRouter(({ location }) => {
@@ -63,7 +64,7 @@ return (
       <Route exact path="/post/:id" component={SinglePost} />
       <Route exact path="/user/profile/:id" component={Form} />
       <Route exact path="/test" component={MyComponent} /> 
-      
+      <Route exact path="/post/:id/edit" component={EditPost} />
       <Route exact path="/login" >
         {localStorage.getItem("userToken") ? 
         <>

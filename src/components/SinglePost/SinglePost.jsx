@@ -15,7 +15,8 @@ class SinglePost extends React.Component {
             statistic: [],
             owner:[],
             comments: [],
-            comment: ''
+            comment: '',
+            is_follow: false,
         }
     }
 
@@ -35,8 +36,9 @@ class SinglePost extends React.Component {
             statistic : res.data.post.statistic,
             owner : res.data.owner,
             comments: res.data.post.comments,
+            is_follow: res.data.is_follower
           })
-            console.log(this.state.comments)
+            console.log(this.state.is_follow)
         }).catch(errors => {
           console.log(errors.response);
           // errors.response ?  alert(errors.response.data.errors) 
@@ -86,14 +88,76 @@ class SinglePost extends React.Component {
         })
       })
     }
+    onDeleteComment = ( event,id) => {
+      event.preventDefault()
+      axios({
+            method: "DELETE",
+            url: "/api/comment/delete",
+            data : {
+                id : id,
+            },
+            headers : {
+                Authorization: "Bearer" + localStorage.getItem("userToken")
+            },
+        }).then(res => {
+            console.log(res)
+            this.setState({ 
+              comments: this.state.comments.filter(res => res.id !== id ) 
+              });
+        })
+    }
+
+    onEditComment = (event,id,new_comment) => {
+      event.preventDefault()
+      axios({
+        method : "POST",
+        url: "/api/comment/edit",
+        headers : {
+          Authorization: "Bearer" + localStorage.getItem("userToken")
+        },
+        data : {
+          "id" : id,
+          "comment" : new_comment
+        }
+      }).then(res=>{
+        this.setState(prevState => ({
+          comments: prevState.comments.map(
+            old_comment => old_comment.id === id ? { ...old_comment, comment: res.data.comment.comment } : old_comment
+          )
+        }))
+      })
+    }
+
+    onClickFollow=(event)=>{
+      event.preventDefault()
+      var method_=''
+      this.state.is_follow == true ? method_="DELETE" : method_="POST" 
+      axios({
+        url:'/api/follow',
+        method: method_,
+        headers : {
+          Authorization: "Bearer" + localStorage.getItem("userToken")
+        },
+        data : {
+          "id" : this.state.owner.id,
+        }
+      }).then(res=>{
+        this.setState({
+          is_follow: ! this.state.is_follow
+        })
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
 
     render(){
           const category = this.state.post.categories ? this.state.post.categories.map(res => {
-            return <a className="badge badge-pill badge-default" href={'/post/category/'+res.name}>{res.name}</a>
+            return <a className="badge badge-pill badge-default" href={'/post/category/'+res.id}>{res.name + "  " + res.posts_count}</a>
         }) : <></>
 
           const comments = this.state.comments ? this.state.comments.map( res => {
-            return <Comments data={res} />
+            return <Comments data={res} delete={this.onDeleteComment} edit ={this.onEditComment}/>
           }) : <></>
         return (
           <>
@@ -142,7 +206,7 @@ class SinglePost extends React.Component {
             </div>
             <hr/>
             <p>
-              Bởi <a href={"/user/profile/"+ this.state.user.id }> {this.state.post.author} </a> 
+              Bởi <a href={"/user/profile/"+ this.state.owner.user_id }> {this.state.post.author} </a> 
               vào ngày <date>{new Date(Date.parse(this.state.post.created_at)).toLocaleDateString()}</date>
             </p>
             <hr/>
@@ -176,8 +240,30 @@ class SinglePost extends React.Component {
                     <Image src={this.state.owner.avatar} className="img-circle avatar" style={{width: "75px" , height:"75px"}}></Image>
                   </div>
                   <div className="col-12 col-xl-8">
-                    <h4>{this.state.owner.first_name +" "+ this.state.owner.last_name}</h4>
+                    <h4><a href={"/user/profile/"+ this.state.owner.id }> {this.state.owner.name} </a></h4>
                     <p>tham gia từ : <date>{new Date(Date.parse(this.state.owner.created_at)).toLocaleDateString()}</date></p>
+                    <p> số lượng blog : {this.state.owner.post_count}</p>
+                    <p>số lượng follow: {this.state.owner.follower_count}</p>
+                  {this.state.is_follow == false ? 
+                  <>
+                    {this.state.owner.id == localStorage.getItem('userId') ? 
+                    <a href={'/post/'+this.state.post.id+'/edit'}>
+                    <button type="button" className="btn btn-primary" >
+                      Edit
+                    </button> 
+                    </a> :
+                    <button type="button" className="btn btn-primary" onClick={this.onClickFollow}>
+                      Follow
+                    </button>
+                     }
+                  </>
+                  :
+                  <>
+                  <button type="button" className="btn btn-primary" onClick={this.onClickFollow}>
+                    UnFollow
+                  </button>
+                  </>
+                  }
                   </div>
                 </div>
               </div>
@@ -216,12 +302,11 @@ class SinglePost extends React.Component {
                 </div>
             </div> 
         </div>
-
             <p></p>
           <form onSubmit={this.submitComment}>
             <div class="form-group">
               
-              <textarea name="comment" name="comment" onChange={this.onCommentChange} class="form-control" rows="3"></textarea>
+              <textarea name="comment" name="comment" value={this.state.comment} onChange={this.onCommentChange} class="form-control" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" >Send</button>
           </form>

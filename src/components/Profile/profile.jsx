@@ -28,7 +28,7 @@ class Profile extends React.Component {
             headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
         }).then(res => {
             console.log(res)
-            if(res.status == 200){
+            if(res.status === 200){
                 this.setState({
                     user:res.data.user,
                     profile: res.data.profile,
@@ -41,7 +41,7 @@ class Profile extends React.Component {
         }).catch(errors => {
             console.log(errors.response);
             alert(errors.response.data.errors)
-            if(errors.response.status == 401) {
+            if(errors.response.status === 401) {
                 localStorage.removeItem("userToken")
                 localStorage.removeItem("userName")
                 window.location.replace('/login')
@@ -79,7 +79,7 @@ class Profile extends React.Component {
     }
 
     render(){
-        const Skill = this.state.skill != [] ? 
+        const Skill = this.state.skill !== [] ? 
                 this.state.skill.map(res => {
                    return (
                        <>

@@ -56,7 +56,7 @@ class SignUp extends React.Component {
         subject : this.state.subject,
       }).then(response =>  {
         console.log('b')
-        if(response.status == 201) {
+        if(response.status === 201) {
           window.location.replace('/login')
         }
         

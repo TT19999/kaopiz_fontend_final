@@ -24,7 +24,7 @@ class  Welcome extends React.Component{
   }
 
   render(){
-      const RenderPost = this.state.post != [] ? 
+      const RenderPost = this.state.post !== [] ? 
       this.state.post.map(res => {
         return (
             <>

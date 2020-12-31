@@ -71,7 +71,7 @@ class ModalEdit extends React.Component {
             headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
         }).then(res => {
             console.log(res)
-            if(res.status == 200){
+            if(res.status === 200){
                 this.setState({
                     first_name: res.data.profile.first_name,
                     last_name: res.data.profile.last_name,
@@ -89,7 +89,7 @@ class ModalEdit extends React.Component {
         }).catch(errors => {
             console.log(errors.response);
             alert(errors.response.data.errors)
-            if(errors.response.status == 401) {
+            if(errors.response.status === 401) {
                 localStorage.removeItem("userToken")
                 localStorage.removeItem("userName")
                 window.location.replace('/login')
@@ -141,7 +141,6 @@ class ModalEdit extends React.Component {
       }
 
     render(){
-        const { selectedOption } = this.state;
         return (
             <>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">

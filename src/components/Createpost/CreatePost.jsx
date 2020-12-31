@@ -89,7 +89,7 @@ export default class CreatePost  extends Component {
         headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
         }).then(res =>  {
             console.log(res)
-            // window.location.replace('/post/' + res.data.post.id)
+            window.location.replace('/post/' + res.data.post.id)
         }).catch(errors => {
             console.log(errors.response);
             alert(errors.response.data.errors)

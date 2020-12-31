@@ -1,6 +1,4 @@
-  
-
-  import React from 'react'
+    import React from 'react'
   import axios from "axios"
   import Banner from '../Banner'
   import { Link } from 'react-router-dom'
@@ -35,7 +33,7 @@
                 },
           }).then(res => {
               console.log(res.data)
-              if(res.status == 200){
+              if(res.status === 200){
                   this.setState({
                       user:res.data.user,
                       profile: res.data.profile,

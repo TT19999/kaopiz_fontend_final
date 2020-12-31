@@ -40,7 +40,7 @@ class Login extends React.Component {
             
         }).catch(errors => {
           console.log(errors.response);
-          if(errors.response.status == 403){
+          if(errors.response.status === 403){
             config.email = this.state.email
             window.location.replace('/verify?'+this.state.email)
           }
