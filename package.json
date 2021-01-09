@@ -7,6 +7,8 @@
     "axios": "^0.18.0",
     "http-proxy-middleware": "^1.0.6",
     "indicative": "^5.0.8",
+    "pusher": "^4.0.2",
+    "pusher-js": "^7.0.2",
     "react": "^16.5.2",
     "react-bootstrap": "^1.4.0",
     "react-dom": "^16.5.2",

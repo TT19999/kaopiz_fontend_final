@@ -7,6 +7,7 @@
 
 // To learn more about the benefits of this model, read https://goo.gl/KwvDNy.
 // This link also includes instructions on opting out of this behavior.
+import Pusher from 'pusher-js'
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -119,11 +120,22 @@ function checkValidServiceWorker(swUrl, config) {
 }
 
 export function unregister() {
-  console.log(window.location.search)
   window.location.pathname !== '/login' 
   && window.location.pathname !== '/signup' 
   && window.location.pathname !== '/forgotPassword' 
   &&  window.location.pathname !== '/verify'
   && window.localStorage.getItem('userToken') == null
   && window.location.replace('/login')
+}
+
+export function hello(){
+  // var pusher = new Pusher('713d7bdf9e0f17458630', {
+  //   cluster: 'ap1'
+  // });
+
+  // var channel = pusher.subscribe('NotificationEvent');
+  // channel.bind('send-message', function(data) {
+  //   console.log('a')
+  // });
+
 }

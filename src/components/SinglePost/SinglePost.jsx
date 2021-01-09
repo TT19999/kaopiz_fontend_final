@@ -3,6 +3,7 @@ import axios from 'axios'
 import Banner from '../Banner';
 import Image from 'react-bootstrap/Image'
 import Comments from './comments/comments';
+import Post from '../Post/post';
 
 class SinglePost extends React.Component {
 
@@ -17,6 +18,8 @@ class SinglePost extends React.Component {
             comments: [],
             comment: '',
             is_follow: false,
+            userPost : [],
+            
         }
     }
 
@@ -36,13 +39,17 @@ class SinglePost extends React.Component {
             statistic : res.data.post.statistic,
             owner : res.data.owner,
             comments: res.data.post.comments,
-            is_follow: res.data.is_follower
+            is_follow: res.data.is_follower,
+
           })
-            console.log(this.state.is_follow)
+            var userPost = res.data.owner.post
+            userPost.splice(3, userPost.length-1)
+            this.setState({
+              userPost : userPost
+            })
         }).catch(errors => {
           console.log(errors.response);
-          // errors.response ?  alert(errors.response.data.errors) 
-          // window.location.replace('/')
+          window.location.replace('/')
         })
     }
 
@@ -147,18 +154,28 @@ class SinglePost extends React.Component {
         })
         console.log(res)
       }).catch(err => {
-        console.log(err)
+        console.log(err.response)
+        
       })
     }
 
     render(){
           const category = this.state.post.categories ? this.state.post.categories.map(res => {
-            return <a className="badge badge-pill badge-default" href={'/post/category/'+res.id}>{res.name + "  " + res.posts_count}</a>
-        }) : <></>
+            return <a className="badge badge-pill badge-default" href={'/tags/'+res.id}>{res.name + "  " + res.posts_count}</a>
+            }) : <></>
 
           const comments = this.state.comments ? this.state.comments.map( res => {
             return <Comments data={res} delete={this.onDeleteComment} edit ={this.onEditComment}/>
           }) : <></>
+          const userPost = this.state.userPost !== [] ? this.state.userPost.map(post =>{
+              return <Post post={this.state.userPost[0]} />
+          }) : <></>
+          // <>
+          //   <p> a</p>
+          // </> 
+          // :
+          // <>
+          // </>
         return (
           <>
         <div>
@@ -189,7 +206,7 @@ class SinglePost extends React.Component {
     </div>
   </header> */}
   <Banner 
-    backgroundImage="url(https://kaopiz-final.s3-ap-southeast-1.amazonaws.com/img/bg-gift.jpg)"
+    backgroundImage={"url("+this.state.post.cover+")"}
     title="Enjoy this blog"
     subtitle="Please, like and share for more people"
 
@@ -315,9 +332,36 @@ class SinglePost extends React.Component {
       </div>
     </div>
   </div>
-
-    
   </div>
+
+
+  <div className="bt-1 bg-grey" style={{paddingTop:"10px"}}>
+  <div className="container">
+    <div className="row">
+        <div className="col-8">
+        {/* <div className="float-left image">
+                <img src={localStorage.getItem("avatar")} className="img-circle avatar" alt=""/>
+                <label for="comment">{localStorage.getItem("userName")}</label>
+            </div> */}
+          <div className="card card-white post bg-grey">
+            <div className="post-heading">
+                <div className="float-left meta">
+                    <div className="title h5">
+                        <p>Bài viết cùng tác giả </p>
+                    </div>
+                </div>
+            </div> 
+          </div>
+          <p></p>
+           {/* {this.state.owner.post !== [] ? <Post post={this.state.owner.post} /> : <></>}  */}
+          {/* <Post post={} />
+          <Post post={} /> */}
+          {userPost}
+      </div>
+    </div>
+  </div>
+  </div>
+
 
   </>
   )

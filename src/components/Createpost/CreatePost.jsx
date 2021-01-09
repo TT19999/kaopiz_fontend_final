@@ -19,6 +19,8 @@ export default class CreatePost  extends Component {
       categories: [{ label: "PNT", value: "PNT" }],
       categoriesDefault: [],
       options: [{ label: "PNT", value: "PNT" },],
+      file:'',
+      cover : 'https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg',
     }
   }
 
@@ -28,7 +30,7 @@ export default class CreatePost  extends Component {
       ['bold', 'italic', 'underline','strike', 'blockquote'],
       [{'align': []}],
       [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image'],
+      ['link', 'video'],
       ['clean']
     ],
   }
@@ -38,7 +40,7 @@ export default class CreatePost  extends Component {
     'bold', 'italic', 'underline', 'strike', 'blockquote',
     'align',
     'list', 'bullet', 'indent',
-    'link', 'image'
+    'link','image', 'video',
   ]
 
 
@@ -82,8 +84,10 @@ export default class CreatePost  extends Component {
         content : this.state.editorHtml,
         author : localStorage.getItem('userName'),
         intro : this.state.intro,
-        status : "public"
+        status : "public",
+        cover : this.state.cover,
       })
+      
       console.log(data)
          axios.post('/api/post', data, {
         headers: {'Authorization' : 'Bearer ' + localStorage.getItem("userToken")}
@@ -102,20 +106,46 @@ export default class CreatePost  extends Component {
     })
   }
 
+  handleImageChange = event => {
+    console.log(event.target)
+    if (event.target.files && event.target.files[0]) {
+      let img = event.target.files[0];
+      var data = new FormData()
+      data.append("image", img)
+      axios.post('/api/image/create',data, {
+          headers : {
+              'Authorization' : 'Bearer ' + localStorage.getItem("userToken")
+          }
+      }).then(res => {
+        this.setState({
+          editorHtml : this.state.editorHtml + '<img src="'+res.data.path+'" />'
+        })
+      }).catch(errors => {
+          console.log(errors.response);
+          alert(errors.response.data.errors)
+      })
+    }
+  }
 
-  delta = {
-    ops: [{
-      insert: 'Hello'
-    }, {
-      insert: 'World',
-      attributes: { bold: true }
-    }, {
-      insert: {
-      image: 'https://kaopiz-final.s3-ap-southeast-1.amazonaws.com/post/1608732438_eEfXqPwoys'
-      },
-      attributes: { width: 'auto', textAlign : 'center' }
-    }]
-  };
+  handleCoverChange = event => {
+    if (event.target.files && event.target.files[0]) {
+      let img = event.target.files[0];
+      var data = new FormData()
+      data.append("image", img)
+      axios.post('/api/image/create',data, {
+          headers : {
+              'Authorization' : 'Bearer ' + localStorage.getItem("userToken")
+          }
+      }).then(res => {
+        this.setState({
+          cover : res.data.path,
+        })
+      }).catch(errors => {
+          console.log(errors.response);
+          alert(errors.response.data.errors)
+      })
+    }
+  }
 
   handleChange = (newValue, actionMeta) => {
     console.log(newValue);  
@@ -129,7 +159,7 @@ export default class CreatePost  extends Component {
     return (
       <>
       <Banner 
-      backgroundImage="url(assets/img/bg-gift.jpg)"
+      backgroundImage={"url("+this.state.cover+")"}
       title="Latest Blog Posts"
       subtitle="Read and get updated on the latest posts"
       />
@@ -155,6 +185,11 @@ export default class CreatePost  extends Component {
 
                     } */}
             </div>
+            <div class="form-group">
+              <label htmlFor='imageInput112' >Chon Ảnh bìa cho bài viết </label>
+              <input type="file" class="form-control-file" id='imageInput112'  onChange={this.handleCoverChange}/>
+            </div>
+            
             <div className="form-group col-12 col-md-6">
             <CreatableSelect
                 isMulti
@@ -165,7 +200,7 @@ export default class CreatePost  extends Component {
             />
                 </div>
         </form>
-          <div className="row" style={{height: "1000px", padding: "10px"}}>
+          <div className="row" style={{minHeight: "45rem", padding: "10px"}}>
             <div className="col-6">
             <div className="text-editor" >
                 <ReactQuill 
@@ -180,19 +215,34 @@ export default class CreatePost  extends Component {
             </div>
             </div>
             <div className="col-6 " >
-            <div className="container" style={{height: "46px"}}>
+            <div className="container" style={{height: "50px"}}>
                 Bài viết
             </div>
-            <div className="ql-snow">
-                <div className="ql-editor">
-                      <div dangerouslySetInnerHTML={{ __html : this.state.editorHtml} } />
-                  </div>
+            <div className="text-editor" >
+              <div className='quill'>
+                <ReactQuill 
+                  theme="bubble"
+                    readOnly
+                    value={this.state.editorHtml}
+                    style={{height: '45rem'}}
+                >
+                </ReactQuill>
+              </div>
             </div>
-                
             </div>
+            <form>
+            <div class="form-group" style={{paddingLeft:'20px'}}>
+              <label htmlFor='imageInput' >Thêm ảnh vào bài viết </label>
+              <input type="file" class="form-control-file" id='imageInput'  onChange={this.handleImageChange}/>
+            </div>
+          </form>
         </div>
+        
       </main>
-      <button type="submit" onClick={this.onClickSave}>
+
+      
+      
+      <button type="submit" className="btn btn-primary" style={{textAlign : 'center', marginLeft : '850px', marginBottom:'20px'}} onClick={this.onClickSave}>
           Đăng bài
       </button>
       </>

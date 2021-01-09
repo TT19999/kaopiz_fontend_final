@@ -21,6 +21,8 @@ class Profile extends React.Component {
             action:"",
             skill:[],
             showModalCard : false,
+            post_count: '',
+            follower_count:'',
         }
     }
     async componentDidMount()  {
@@ -35,6 +37,8 @@ class Profile extends React.Component {
                     skill : res.data.skill,
                     action: res.data.action,
                     avatar : res.data.profile.avatar,
+                    post_count : res.data.post_count,
+                    follower_count : res.data.follower_count
                 })
                 console.log(this.state.user.name)
             }
@@ -92,7 +96,7 @@ class Profile extends React.Component {
         return (
             <div>
                 <Banner 
-                backgroundImage="url(assets/img/bg-gift.jpg)"
+                backgroundImage="url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)"
                 />
                 <main className="main-content bg-gray">
                                 <div class="container emp-profile">
@@ -105,6 +109,15 @@ class Profile extends React.Component {
                                             Change Photo
                                             <input type="file" name="avatar" onChange={this.onAvatarChange} />
                                         </div>
+                                        <div class="profile-work">
+                                        <p>WORK LINK</p>
+                                            <a href={this.state.profile.facebook}>facebook : <a>{this.state.profile.facebook}</a> </a><br/>
+                                            <a href={this.state.profile.twitter}>twitter : <a>{this.state.profile.twitter}</a> </a><br/>
+                                            <a href={this.state.profile.github}>github : <a>{this.state.profile.github}</a> </a><br/>
+                                            <a href={this.state.profile.website}>website : <a>{this.state.profile.website}</a> </a><br/>
+                                        <p>SKILLS</p>
+                                        {Skill}
+                                    </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -115,6 +128,8 @@ class Profile extends React.Component {
                                         <h6>
                                             {this.state.profile.subject}
                                         </h6>
+                                        <p> Số lượng blog : {this.state.post_count}</p>
+                                        <p> Số lượng blog : {this.state.follower_count}</p>
                                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
@@ -124,24 +139,6 @@ class Profile extends React.Component {
                                             </li>
                                         </ul>
                                     </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <ModalEdit user={this.state.user} profile={this.state.profile} skill={this.state.skill}/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="profile-work">
-                                        <p>WORK LINK</p>
-                                            <a href={this.state.profile.facebook}>facebook : <a>{this.state.profile.facebook}</a> </a><br/>
-                                            <a href={this.state.profile.twitter}>twitter : <a>{this.state.profile.twitter}</a> </a><br/>
-                                            <a href={this.state.profile.github}>github : <a>{this.state.profile.github}</a> </a><br/>
-                                            <a href={this.state.profile.website}>website : <a>{this.state.profile.website}</a> </a><br/>
-                                        <p>SKILLS</p>
-                                        {Skill}
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
                                     <div class="tab-content profile-tab" id="myTabContent">
                                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                                             <div class="row">
@@ -189,6 +186,10 @@ class Profile extends React.Component {
                                             <FormReset />
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <ModalEdit user={this.state.user} profile={this.state.profile} skill={this.state.skill}/>
                                 </div>
                             </div>
                         </form>

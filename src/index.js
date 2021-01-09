@@ -20,6 +20,9 @@ import UserBlog from './components/UserBlog/UserBlog';
 import Verify from './components/Verify/Verify';
 import MyComponent from './components/Welcome/test';
 import EditPost from './components/Edit/EditPost';
+import SingleTag from './components/SingleTag/SingleTag';
+import Tags from './components/Tag/Tag';
+import Search from './components/Search/Search';
 
 
 const Main = withRouter(({ location }) => {
@@ -54,6 +57,7 @@ return (
     && location.pathname !== '/signup' 
     && location.pathname !== '/forgotPassword' 
     && location.pathname !== '/verify'
+    && location.pathname !== '/test'
     && <Navbar/>
   }
     <Switch>
@@ -65,6 +69,9 @@ return (
       <Route exact path="/user/profile/:id" component={Form} />
       <Route exact path="/test" component={MyComponent} /> 
       <Route exact path="/post/:id/edit" component={EditPost} />
+      <Route exact path="/tags" component={Tags} />
+      <Route exact path = "/tags/:id" component={SingleTag} />
+      <Route exact path="/search" component={Search} />
       <Route exact path="/login" >
         {localStorage.getItem("userToken") ? 
         <>
@@ -104,6 +111,7 @@ return (
     && location.pathname !== '/signup' 
     && location.pathname !== '/forgotPassword'
     && location.pathname !== '/verify'
+    && location.pathname !== '/test'
     && <Footer />
     }
   </div>
@@ -119,4 +127,5 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();
+serviceWorker.hello();
 //https://designrevision.com/downloads/shards-dashboard-lite-react/

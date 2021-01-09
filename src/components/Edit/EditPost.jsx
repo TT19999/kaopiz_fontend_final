@@ -15,6 +15,7 @@ class EditPost extends React.Component {
             options : [],
             post: [],
             selected : false,
+            cover : ''
         }
     }
 
@@ -24,7 +25,7 @@ class EditPost extends React.Component {
           ['bold', 'italic', 'underline','strike', 'blockquote'],
           [{'align': []}],
           [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-          ['link', 'image'],
+          ['link'],
           ['clean']
         ],
       }
@@ -50,6 +51,7 @@ class EditPost extends React.Component {
                 title : res.data.post.title,
                 content : res.data.post.content,
                 intro : res.data.post.intro,
+                cover : res.data.post.cover,
                 categories : res.data.post.categories ? res.data.post.categories.map(x => {
                     console.log(x)
                     var data = ({
@@ -112,6 +114,7 @@ class EditPost extends React.Component {
                 status : "public",
                 author : localStorage.getItem('userName'),
                 categories : this.state.categories,
+                cover : this.state.cover
             },
             headers : {
                 Authorization: "Bearer" + localStorage.getItem("userToken")
@@ -131,11 +134,52 @@ class EditPost extends React.Component {
         })
     };
 
+    handleImageChange = event => {
+        console.log(event.target)
+        if (event.target.files && event.target.files[0]) {
+          let img = event.target.files[0];
+          var data = new FormData()
+          data.append("image", img)
+          axios.post('/api/image/create',data, {
+              headers : {
+                  'Authorization' : 'Bearer ' + localStorage.getItem("userToken")
+              }
+          }).then(res => {
+            this.setState({
+              editorHtml : this.state.editorHtml + '<img src="'+res.data.path+'" />'
+            })
+          }).catch(errors => {
+              console.log(errors.response);
+              alert(errors.response.data.errors)
+          })
+        }
+      }
+
+    handleCoverChange = event => {
+        if (event.target.files && event.target.files[0]) {
+          let img = event.target.files[0];
+          var data = new FormData()
+          data.append("image", img)
+          axios.post('/api/image/create',data, {
+              headers : {
+                  'Authorization' : 'Bearer ' + localStorage.getItem("userToken")
+              }
+          }).then(res => {
+            this.setState({
+              cover : res.data.path,
+            })
+          }).catch(errors => {
+              console.log(errors.response);
+              alert(errors.response.data.errors)
+          })
+        }
+      }
+
     render(){
         return(
             <>
             <Banner
-                backgroundImage="url(assets/img/bg-gift.jpg)"
+                backgroundImage={"url("+this.state.cover+")"}
                 title="Latest Blog Posts"
                 subtitle="Read and get updated on the latest posts"
             />
@@ -161,6 +205,12 @@ class EditPost extends React.Component {
 
                     } */}
             </div>
+
+            <div class="form-group">
+              <label htmlFor='imageInput112' >Chon Ảnh bìa cho bài viết </label>
+              <input type="file" class="form-control-file" id='imageInput112'  onChange={this.handleCoverChange}/>
+            </div>
+
             <div className="form-group col-12 col-md-6">
                 {this.state.selected == false ? <></> : 
                 <CreatableSelect
@@ -193,18 +243,30 @@ class EditPost extends React.Component {
             <div className="container" style={{height: "46px"}}>
                 Bài viết
             </div>
-            <div className="ql-snow">
-                <div className="ql-editor">
-                      <div dangerouslySetInnerHTML={{ __html : this.state.content} } />
-                  </div>
+            <div className="text-editor" >
+              <div className='quill'>
+                <ReactQuill 
+                  theme="bubble"
+                    readOnly
+                    value={this.state.content}
+                    style={{height: '45rem'}}
+                >
+                </ReactQuill>
+              </div>
             </div>
                 
             </div>
+            <form>
+            <div class="form-group" style={{paddingLeft:'20px'}}>
+              <label htmlFor='imageInput' >Thêm ảnh vào bài viết </label>
+              <input type="file" class="form-control-file" id='imageInput'  onChange={this.handleImageChange}/>
+            </div>
+          </form>
         </div>
         </main>
-        <button type="submit" onClick={this.onClickSave}>
-            Sửa bài
-        </button>
+        <button type="submit" className="btn btn-primary" style={{textAlign : 'center', marginLeft : '850px', marginBottom:'20px'}} onClick={this.onClickSave}>
+          Đăng bài
+      </button>
             </>
             
         )

@@ -23,48 +23,66 @@ class Post extends React.Component {
 
     render(){
       const category = this.props.post.categories ? this.props.post.categories.map(res => {
-        return <div className="tag">{res.name + "  " + res.posts_count}</div>
+        return <div className="tag"> <a href={'/tags/'+res.id}>{res.name + "  " + res.posts_count}</a></div>
           }) : <></>
         return (
-          <div className="blog-card-grid-space">
-          <a className="blogg-card" href={"/post/" + this.props.post.id}>
-            <div>
-              <h1>{this.props.post.title}</h1>
-              <p>{this.props.post.intro}</p>
-              <p>By {this.props.post.author}</p>
-              <div className="date">{new Date(Date.parse(this.props.post.created_at)).toLocaleDateString()}</div>
-              <div className="more">
-                <div class="dropdown">
-                  <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  </button>
-                  <div class="dropdown-menu">
-                      {this.props.post.user_id == localStorage.getItem("userId") ? 
+          <div class="blog-card">
+            <div class="meta">
+              <div class="photo" style={{backgroundImage: 'url('+this.props.post.cover+')'}}></div>
+              <ul class="details">
+                <li class="author"><a href={'/user/profile/'+this.props.post.user_id}>{this.props.post.author}</a></li>
+                <li class="date">{new Date(Date.parse(this.props.post.created_at)).toLocaleDateString()}</li>
+                <li class="tagss">
+                  <ul>
+                  <i class="fa fa-eye"> </i>
+                  {this.props.post.views}
+                  </ul>
+                </li>
+                <li class="tagss">
+                  <ul>
+                  <i class="fa fa-gear"> </i>
+                  {this.props.post.user_id == localStorage.getItem("userId") ? 
                         <>
+                        <li>
                           <a href={'/post/'+this.props.post.id+'/edit'}>
-                          <button class="dropdown-item" type="button"  data-toggle="modal" data-target="#exampleModal">
-                            
-                            Sửa
-                          </button>
+                            Edit
                           </a>
-                          <button class="dropdown-item" type="button" onClick={this.onClickDelete}>xóa</button>
+                        </li>
+                          <li>
+                            <button class="dropdown-item" type="button" onClick={this.onClickDelete}>Delete</button>
+                          </li>
+                          
                         </>
                         :
-                          <>
-                          <button class="dropdown-item" type="button">Báo cáo</button>
-                          </>
+                        <>
+                          <li>
+                            <button class="dropdown-item" type="button">Báo cáo</button>
+                          </li>
+                          <li>
+
+                          </li>
+                        </>
                       }
-                      
-                      
-                  </div>
-                </div>
-              </div>
-              <div className="tags">
-                {category} 
-              </div>
+                  </ul>
+                </li> 
+              </ul>
             </div>
-          </a>
-        </div>
-  );
+            <div class="description">
+              <h1>
+                <a href={"/post/" + this.props.post.id}>
+                {this.props.post.title}
+                </a>
+              </h1>
+              <div className='tags'>
+                {category}
+              </div>
+              <p>{this.props.post.intro}</p>
+              <p class="read-more">
+                <a href={"/post/" + this.props.post.id}>Read More</a>
+              </p>
+            </div>
+          </div>
+      )
     }
 }
   
